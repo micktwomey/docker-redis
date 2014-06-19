@@ -1,15 +1,25 @@
-FROM ubuntu:13.10
+FROM ubuntu:14.04
 MAINTAINER Michael Twomey, mick@twomeylee.name
 
-RUN echo "deb http://ppa.launchpad.net/chris-lea/redis-server/ubuntu saucy main " > /etc/apt/sources.list.d/redis.list \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C7917B12
+ENV REDIS_VERSION 2.8.11
 
+# && apt-get upgrade -y \
 RUN apt-get update \
-    && apt-get upgrade -y \
     && apt-get install -y \
-    redis-server \
-    redis-tools \
+        curl \
+        gcc \
+        make \
     && apt-get autoremove \
+    && curl http://download.redis.io/releases/redis-${REDIS_VERSION}.tar.gz > /usr/src/redis-${REDIS_VERSION}.tar.gz \
+    && tar -C /usr/src -zxf /usr/src/redis-${REDIS_VERSION}.tar.gz \
+    && cd /usr/src/redis-${REDIS_VERSION} \
+    && make \
+    && make install \
+    && apt-get purge -y \
+        curl \
+        gcc \
+        make \
+    && apt-get autoremove -y \
     && apt-get clean
 
 ADD redis.conf /etc/redis/redis.conf
@@ -21,4 +31,4 @@ EXPOSE 6379
 
 CMD ["/etc/redis/redis.conf"]
 
-ENTRYPOINT ["/usr/bin/redis-server"]
+ENTRYPOINT ["/usr/local/bin/redis-server"]

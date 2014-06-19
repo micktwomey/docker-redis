@@ -1,5 +1,5 @@
 IMAGE=micktwomey/redis
-TAG=$(IMAGE):2.8.11-1
+TAG=$(IMAGE):2.8.11-2
 TAG_LATEST=$(IMAGE):latest
 VOLUMES=-v /data/redis/logs:/redis/logs:rw -v /data/redis/db:/redis/db:rw
 
